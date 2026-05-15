@@ -12,6 +12,7 @@
 .vscode/
 .idea/
 
+API_DOCUMENTATION.MD
 # Logs
 npm-debug.log*
 yarn-debug.log*

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { Professor, Publication, Student } from '../../types';
-import { professorsApi, publicationsApi } from '../../api';
+import type { Professor, Publication, Student, Grant } from '../../types';
+import { professorsApi, publicationsApi, grantsApi } from '../../api';
 import { Modal, Button, Input, Card, Badge, EmptyState, Spinner, Confirm } from '../ui';
 import { useEntity } from '../../hooks/useEntity';
 import { ProjectDetail } from '../projects';
@@ -50,6 +50,7 @@ export function ProfessorDetail({ professorId, onClose, onEdit, onDelete, onPubl
   const { data: students = [] } = useEntity(() => professorsApi.getStudents(professorId));
   const { data: projects = [] } = useEntity(() => professorsApi.getProjects(professorId));
   const { data: publications = [] } = useEntity(() => professorsApi.getPublications(professorId));
+  const { data: grants = [] } = useEntity(() => professor?.department ? grantsApi.getByDepartment(professor.department) : Promise.resolve([]));
   const [nestedDetailId, setNestedDetailId] = useState<number | null>(null);
   const [nestedDetailType, setNestedDetailType] = useState<'student' | 'project' | 'publication' | null>(null);
 
@@ -115,6 +116,14 @@ export function ProfessorDetail({ professorId, onClose, onEdit, onDelete, onPubl
               <li key={pub.id} className="detail-list-item clickable" onClick={() => { setNestedDetailId(pub.id); setNestedDetailType('publication'); }}><span>{pub.title}</span><Badge label={pub.type} /><span className="muted">{pub.year}</span></li>
             ))}</ul>
           ) : <EmptyState icon="📚" message="No publications yet" />}
+        </div>
+        <div className="detail-section">
+          <div className="detail-section-header"><span>💰</span><h3>Grants</h3><span className="detail-count">{grants?.length ?? 0}</span></div>
+          {grants && grants.length ? (
+            <ul className="detail-list">{grants.map((g: Grant) => (
+              <li key={g.id} className="detail-list-item"><span>{g.title}</span><Badge label={g.type} /><span className="muted">₹{g.fundsProvided ?? 'N/A'}</span></li>
+            ))}</ul>
+          ) : <EmptyState icon="🏦" message="No grants yet" />}
         </div>
       </div>
       <div className="detail-actions">

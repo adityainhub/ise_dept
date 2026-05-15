@@ -1,3 +1,15 @@
+export interface Grant {
+  id: number;
+  title: string;
+  fundingAgency: string;
+  type: 'Government' | 'Non-Government';
+  fundsProvided?: number;
+  dateOfReceipt?: string;
+  durationMonths?: number;
+  department: string;
+  status: 'ongoing' | 'completed' | 'pending';
+}
+
 export interface Professor {
   id: number;
   name: string;
@@ -6,6 +18,7 @@ export interface Professor {
   students?: Student[];
   projects?: Project[];
   publications?: Publication[];
+  grants?: Grant[];
 }
 
 export interface Student {

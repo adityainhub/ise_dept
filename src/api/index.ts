@@ -1,4 +1,4 @@
-import type { Professor, Student, Project, Publication } from '../types';
+import type { Professor, Student, Project, Publication, Grant } from '../types';
 
 // Read Vite build-time env `VITE_API_BASE` (empty => same-origin relative requests)
 const buildTimeBase = ((import.meta as any).env?.VITE_API_BASE as string) || '';
@@ -56,4 +56,15 @@ export const publicationsApi = {
   update: (id: number, data: Partial<Publication>) =>
     request<Publication>(`/api/publications/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: number) => request<void>(`/api/publications/${id}`, { method: 'DELETE' }),
+};
+
+export const grantsApi = {
+  list: () => request<Grant[]>('/api/grants'),
+  get: (id: number) => request<Grant>(`/api/grants/${id}`),
+  getByDepartment: (department: string) => request<Grant[]>(`/api/grants/department/${department}`),
+  create: (data: Partial<Grant>) =>
+    request<Grant>('/api/grants', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: number, data: Partial<Grant>) =>
+    request<Grant>(`/api/grants/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: number) => request<void>(`/api/grants/${id}`, { method: 'DELETE' }),
 };
