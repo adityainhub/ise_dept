@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Professor, Publication, Student, Grant } from '../../types';
 import { professorsApi, publicationsApi, grantsApi } from '../../api';
 import { Modal, Button, Input, Card, Badge, EmptyState, Spinner, Confirm } from '../ui';
@@ -50,9 +50,20 @@ export function ProfessorDetail({ professorId, onClose, onEdit, onDelete, onPubl
   const { data: students = [] } = useEntity(() => professorsApi.getStudents(professorId));
   const { data: projects = [] } = useEntity(() => professorsApi.getProjects(professorId));
   const { data: publications = [] } = useEntity(() => professorsApi.getPublications(professorId));
-  const { data: grants = [] } = useEntity(() => professor?.department ? grantsApi.getByDepartment(professor.department) : Promise.resolve([]));
+  const [grants, setGrants] = useState<Grant[]>([]);
+  const [grantsLoading, setGrantsLoading] = useState(false);
   const [nestedDetailId, setNestedDetailId] = useState<number | null>(null);
   const [nestedDetailType, setNestedDetailType] = useState<'student' | 'project' | 'publication' | null>(null);
+
+  // Fetch grants when professor department is loaded
+  useEffect(() => {
+    if (!professor?.department) return;
+    setGrantsLoading(true);
+    grantsApi.getByDepartment(professor.department)
+      .then(data => setGrants(data || []))
+      .catch(() => setGrants([]))
+      .finally(() => setGrantsLoading(false));
+  }, [professor?.department]);
 
   if (nestedDetailType === 'publication' && nestedDetailId) {
     return (
