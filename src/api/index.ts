@@ -1,6 +1,8 @@
 import type { Professor, Student, Project, Publication } from '../types';
 
-const BASE_URL = 'http://localhost:8080';
+// Read Vite build-time env `VITE_API_BASE` (empty => same-origin relative requests)
+const buildTimeBase = ((import.meta as any).env?.VITE_API_BASE as string) || '';
+const BASE_URL = buildTimeBase.replace(/\/$/, '');
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
